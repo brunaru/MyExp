@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="app_name">MyExp</string>
+    <string name="title_activity_main">MyExp</string>
+    <string name="hello_world">Hello world!</string>
+    
+    <string name="lorem_ipsum">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam eget laoreet libero. Integer a nisi.</string>
+    <string name="dummy">Dummy</string>
+    <string name="_01">01.</string>
+    
+    <string name="ok">OK</string>
+    <string name="next">Next</string>
+    <string name="back">Back</string>
+    <string name="open">Open</string>
+    <string name="yes">Yes</string>
+    <string name="no">No</string>
+    <string name="confirm_finish">Finish questionnaire?</string>
+    <string name="error_answer_question">You have to answer the question to continue.</string>
+
+</resources>
