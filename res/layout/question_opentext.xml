@@ -9,6 +9,7 @@
         android:layout_height="wrap_content"
         android:layout_alignParentLeft="true"
         android:layout_alignParentTop="true"
+        android:layout_marginTop="5dp"
         android:text="@string/_01"
         android:textAppearance="@style/QText" />
 
@@ -18,6 +19,7 @@
         android:layout_height="wrap_content"
         android:layout_alignParentTop="true"
         android:layout_marginLeft="5dp"
+        android:layout_marginTop="5dp"
         android:layout_toRightOf="@id/textViewNumber"
         android:text="@string/lorem_ipsum"
         android:textAppearance="@style/QText" />
@@ -30,6 +32,9 @@
         android:layout_marginTop="10dp"
         android:gravity="top"
         android:ems="10"
+        android:textColor="@android:color/black"
+        android:textColorHint="@android:color/darker_gray"
+        android:hint="@string/your_answer"
         android:inputType="textMultiLine" >
         <requestFocus />
     </EditText>

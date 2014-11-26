@@ -17,5 +17,6 @@
     <string name="no">No</string>
     <string name="confirm_finish">Finish questionnaire?</string>
     <string name="error_answer_question">You have to answer the question to continue.</string>
+    <string name="your_answer">Your answer...</string>
 
 </resources>

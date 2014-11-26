@@ -11,6 +11,8 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.res.Resources;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -35,18 +37,17 @@ import br.usp.myexp.ems.xml.OpenText;
 import br.usp.myexp.ems.xml.Questionnnaire;
 
 public class QuestionnaireActivity extends Activity {
-    
+
     private boolean backPressed = false;
-    
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         String fileName = getIntent().getStringExtra(Constants.QUESTIONNAIRE_FILE);
         createQuestionnaire(fileName);
     }
-    
-    
-    @SuppressLint("InflateParams") 
+
+    @SuppressLint("InflateParams")
     private void createQuestionnaire(String fileName) {
 
         final QuestionnaireManager manager = new QuestionnaireManager();
@@ -58,13 +59,17 @@ public class QuestionnaireActivity extends Activity {
         long dateMs = date.getTime();
         answersGroup.setDateMs(dateMs);
         answersGroup.setAnswers(answers);
+        
+        final int colorId = Resources.getSystem().getIdentifier("btn_check_holo_light", "drawable", "android");
 
         List<MultipleChoice> multiqs = questionnnaire.getQuestions().getMultipleChoiceQuestions();
-        List<OpenText> openqs = questionnnaire.getQuestions().getOpenTextQuestions();        
+        List<OpenText> openqs = questionnnaire.getQuestions().getOpenTextQuestions();
 
-        /* Positions map: key is the question number, 
-         * value is the position in its respective list.
-         * The map is created to order all the questions positions. */
+        /*
+         * Positions map: key is the question number, value is the position in
+         * its respective list. The map is created to order all the questions
+         * positions.
+         */
         Map<Integer, String> positions = new TreeMap<Integer, String>();
         for (int i = 0; i < multiqs.size(); i++) {
             String pos = "M" + i;
@@ -74,7 +79,7 @@ public class QuestionnaireActivity extends Activity {
             String pos = "O" + i;
             positions.put(openqs.get(i).getNumber(), pos);
         }
-        
+
         /* List of layouts. */
         final List<RelativeLayout> layouts = new ArrayList<RelativeLayout>();
         /* Total number of questions. */
@@ -82,11 +87,13 @@ public class QuestionnaireActivity extends Activity {
         /* Creates a layout for each question. */
         LayoutInflater inflater = LayoutInflater.from(getApplicationContext());
         for (int k = 1; k <= numberQuestions; k++) {
-            
-            RelativeLayout layout;
+
+            final RelativeLayout layout;
             String number;
             String text;
-            
+            final int questionNumber = k;
+            final boolean obligatory;
+
             String pos = positions.get(k);
             if (pos.contains("M")) {
                 /* Multiple choice question */
@@ -94,7 +101,8 @@ public class QuestionnaireActivity extends Activity {
                 MultipleChoice question = multiqs.get(realPos);
                 number = String.valueOf(question.getNumber());
                 text = question.getText();
-                
+                obligatory = question.getObligatory();
+
                 if (question.getOnlyone() == true) {
                     /* Radio. */
                     layout = (RelativeLayout) inflater.inflate(R.layout.question_multi_onlyone, null);
@@ -103,20 +111,24 @@ public class QuestionnaireActivity extends Activity {
                     for (String option : options) {
                         RadioButton radio = new RadioButton(getApplicationContext());
                         radio.setText(option);
+                        radio.setTextColor(Color.BLACK);
+                        radio.setButtonDrawable(colorId);
                         radioGroupMulti.addView(radio);
                     }
                 } else {
                     /* Checkbox. */
                     layout = (RelativeLayout) inflater.inflate(R.layout.question_multi_check, null);
                     LinearLayout linearCheck = (LinearLayout) layout.findViewById(R.id.linearLayCheckBox);
-                    List<String> options = question.getOptions();                   
+                    List<String> options = question.getOptions();
                     for (String option : options) {
                         CheckBox check = new CheckBox(getApplicationContext());
-                        check.setText(option);                        
+                        check.setText(option);
+                        check.setTextColor(Color.BLACK);
+                        getResources();                        
+                        check.setButtonDrawable(colorId);
                         linearCheck.addView(check);
                     }
                 }
-                
 
             } else { // pos.contains("O")
                 /* Open text question */
@@ -124,6 +136,7 @@ public class QuestionnaireActivity extends Activity {
                 OpenText question = openqs.get(realPos);
                 number = String.valueOf(question.getNumber());
                 text = question.getText();
+                obligatory = question.getObligatory();
                 layout = (RelativeLayout) inflater.inflate(R.layout.question_opentext, null);
             }
             /* Common fields. */
@@ -132,28 +145,24 @@ public class QuestionnaireActivity extends Activity {
             textViewNumber.setText(number + ".");
             textViewQuestion.setText(text);
             /* Add to list. */
-            layouts.add(layout);            
-        }
-        
-        /* Configures buttons actions. */
-        for (int i = 0; i < layouts.size(); i++) {
-            final RelativeLayout layout = layouts.get(i);
+            layouts.add(layout);
+
             final Button buttonConfirm = (Button) layout.findViewById(R.id.buttonConfirm);
             final Button buttonBack = (Button) layout.findViewById(R.id.buttonBack);
-            final int pos = i;
-            if (pos == (layouts.size()-1)) {
+            if (questionNumber == numberQuestions) {
                 /* Last question. */
                 buttonConfirm.setText(R.string.ok);
             }
             /* Button Confirm. */
-            buttonConfirm.setOnClickListener(new OnClickListener() {                    
+            buttonConfirm.setOnClickListener(new OnClickListener() {
                 @Override
                 public void onClick(View arg0) {
                     EditText editTextOpen = (EditText) layout.findViewById(R.id.editTextOpen);
                     String answerText = "";
+                    Boolean obligatory = true;
                     if (editTextOpen != null) {
                         /* Text. */
-                        answerText = editTextOpen.getText().toString();                        
+                        answerText = editTextOpen.getText().toString();
                     } else {
                         RadioGroup radioGroupMulti = (RadioGroup) layout.findViewById(R.id.radioGroupMulti);
                         if (radioGroupMulti != null) {
@@ -161,7 +170,7 @@ public class QuestionnaireActivity extends Activity {
                             RadioButton radio = (RadioButton) findViewById(radioGroupMulti.getCheckedRadioButtonId());
                             if (radio != null) {
                                 answerText = radio.getText().toString();
-                            }                            
+                            }
                         } else {
                             /* Checkbox. */
                             LinearLayout linearCheck = (LinearLayout) layout.findViewById(R.id.linearLayCheckBox);
@@ -178,55 +187,60 @@ public class QuestionnaireActivity extends Activity {
                             }
                         }
                     }
-                    
-                    if (answerText != null && !answerText.isEmpty()) {
+
+                    if (answerText == null) {
+                        answerText = "";
+                    }
+
+                    if (!answerText.isEmpty() || obligatory == false) {
                         Toast.makeText(getApplicationContext(), answerText, Toast.LENGTH_SHORT).show();
                         if (backPressed) {
                             answers.remove(answers.size() - 1);
                             backPressed = false;
                         }
-                        Answer answer = new Answer(pos+1, answerText);
+                        Answer answer = new Answer(questionNumber, answerText);
                         answers.add(answer);
-                        if (pos == (layouts.size()-1)) {
+                        if (questionNumber == numberQuestions) {
                             /* Last question. */
                             AlertDialog dialog = confirmFinishDialog(manager, answersGroup, questionnnaire.getId());
-                            dialog.show();                            
+                            dialog.show();
                         } else {
                             /* Next. */
-                            setContentView(layouts.get(pos+1));
+                            setContentView(layouts.get(questionNumber));
                         }
                     } else {
                         Toast.makeText(getApplicationContext(), R.string.error_answer_question, Toast.LENGTH_SHORT).show();
                     }
-                    
+
                     InputMethodManager inputManager = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
                     inputManager.hideSoftInputFromWindow(buttonConfirm.getWindowToken(), 0);
-                    
+
                 }
             });
             /* Button Back. */
-            if (pos == 0) {
+            if (questionNumber == 1) {
                 /* First question. */
                 buttonBack.setVisibility(View.INVISIBLE);
             }
-            buttonBack.setOnClickListener(new OnClickListener() {                
+            buttonBack.setOnClickListener(new OnClickListener() {
                 @Override
                 public void onClick(View arg0) {
-                    if (pos != 0) {
+                    if (questionNumber != 1) {
                         InputMethodManager inputManager = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
                         inputManager.hideSoftInputFromWindow(buttonBack.getWindowToken(), 0);
-                        setContentView(layouts.get(pos-1));
+                        setContentView(layouts.get(questionNumber - 2));
                     }
                 }
             });
         }
-        
+
         /* First screen. */
         setContentView(layouts.get(0));
 
     }
-    
-    private AlertDialog confirmFinishDialog(final QuestionnaireManager manager, final AnswersGroup answersGroup, final String questionnaireId) {
+
+    private AlertDialog confirmFinishDialog(final QuestionnaireManager manager, final AnswersGroup answersGroup,
+            final String questionnaireId) {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setMessage(R.string.confirm_finish).setPositiveButton(R.string.yes, new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int id) {
@@ -240,7 +254,7 @@ public class QuestionnaireActivity extends Activity {
         });
         return builder.create();
     }
-    
+
     @Override
     public void onBackPressed() {
         Button buttonBack = (Button) findViewById(R.id.buttonBack);

@@ -4,10 +4,12 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
+import java.io.FilenameFilter;
 import java.io.IOException;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
@@ -16,6 +18,11 @@ import org.apache.commons.io.FileUtils;
 import org.simpleframework.xml.Serializer;
 import org.simpleframework.xml.core.Persister;
 
+import android.annotation.SuppressLint;
+import android.app.AlarmManager;
+import android.app.PendingIntent;
+import android.content.Context;
+import android.content.Intent;
 import android.os.Environment;
 import br.usp.myexp.ems.json.AnswersGroup;
 import br.usp.myexp.ems.json.QuestionnaireAnswers;
@@ -86,6 +93,7 @@ public class QuestionnaireManager {
         return false;
     }
     
+    @SuppressWarnings("unused")
     private boolean reWriteQuestionAnswerXml(String fileName, String questionNumber, String answer) {
         try {
             File file = new File(fileName);
@@ -100,6 +108,7 @@ public class QuestionnaireManager {
         return false;
     }
     
+    @SuppressWarnings("unused")
     private String getAnswersFileNameXml(String questionnaireId) {
         File dir = getDir();
         if (dir != null) {            
@@ -155,6 +164,57 @@ public class QuestionnaireManager {
         }
 
         return false;
+    }
+    
+    public void scheduleAlarms(Context context) {
+        File dir = getDir();
+        File[] files = dir.listFiles(new MyFileNameFilter(".xml"));
+        Boolean first = true;
+        for (File file : files) {
+            String fileName = file.getName();
+            Questionnnaire ques = readQuestionnaire(fileName);
+            if (ques != null) {                
+                scheduleAlarms(context, fileName, ques, first);
+                first = false;
+            }
+        }
+    }
+    
+    @SuppressLint("DefaultLocale")
+    public static class MyFileNameFilter implements FilenameFilter {
+        
+        private String extension;
+
+        public MyFileNameFilter(String extension) {
+            this.extension = extension.toLowerCase();
+        }
+
+        @Override
+        public boolean accept(File dir, String name) {
+            return name.toLowerCase().endsWith(extension);
+        }
+        
+    }
+    
+    private void scheduleAlarms(Context context, String fileName, Questionnnaire ques, Boolean first) {
+        List<String> times = ques.getTriggers().getTimes();
+        AlarmManager alarmMgr = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
+        Intent intent = new Intent(context, AlarmReceiver.class);
+        intent.putExtra(Constants.QUESTIONNAIRE_FILE, fileName);
+        PendingIntent alarmIntent = PendingIntent.getBroadcast(context, 0, intent, 0);
+        if (first) {
+            alarmMgr.cancel(alarmIntent);
+        }
+        for (String time : times) {
+            int dotsPos = time.indexOf(":");
+            int hour = Integer.valueOf(time.substring(0, dotsPos));
+            int min = Integer.valueOf(time.substring(dotsPos + 1));
+            Calendar calendar = Calendar.getInstance();
+            calendar.setTimeInMillis(System.currentTimeMillis());
+            calendar.set(Calendar.HOUR_OF_DAY, hour);
+            calendar.set(Calendar.MINUTE, min);
+            alarmMgr.setRepeating(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), AlarmManager.INTERVAL_DAY, alarmIntent);
+        }
     }
 
 }

@@ -1,22 +1,14 @@
 package br.usp.myexp.ui;
 
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.List;
 
 import android.app.Activity;
-import android.app.AlarmManager;
-import android.app.Notification;
-import android.app.NotificationManager;
-import android.app.PendingIntent;
-import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.v4.app.NotificationCompat;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
-import br.usp.myexp.AlarmReceiver;
 import br.usp.myexp.Constants;
 import br.usp.myexp.QuestionnaireManager;
 import br.usp.myexp.R;
@@ -37,36 +29,14 @@ public class MainActivity extends Activity {
         open.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View arg0) {
-               // Intent intent = new Intent(getApplicationContext(), QuestionnaireActivity.class);
-               // intent.putExtra(Constants.QUESTIONNAIRE_FILE, "example.xml");
-                //startActivity(intent);
+                Intent intent = new Intent(getApplicationContext(), QuestionnaireActivity.class);
+                intent.putExtra(Constants.QUESTIONNAIRE_FILE, "example.xml");
+                startActivity(intent);
             }
         });
         
-        scheduleAlarms();
-    }
-    
-    private void scheduleAlarms() {
         QuestionnaireManager manager = new QuestionnaireManager();
-        Questionnnaire ques = manager.readQuestionnaire("example.xml");
-        List<String> times = ques.getTriggers().getTimes();
-
-        AlarmManager alarmMgr = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
-        Intent intent = new Intent(this, AlarmReceiver.class);
-        intent.putExtra(Constants.QUESTIONNAIRE_FILE, "example.xml");
-        PendingIntent alarmIntent = PendingIntent.getBroadcast(this, 0, intent, 0);
-        alarmMgr.cancel(alarmIntent);
-
-        for (String time : times) {
-            int dotsPos = time.indexOf(":");
-            int hour = Integer.valueOf(time.substring(0, dotsPos));
-            int min = Integer.valueOf(time.substring(dotsPos + 1));
-            Calendar calendar = Calendar.getInstance();
-            calendar.setTimeInMillis(System.currentTimeMillis());
-            calendar.set(Calendar.HOUR_OF_DAY, hour);
-            calendar.set(Calendar.MINUTE, min);
-            alarmMgr.setRepeating(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), AlarmManager.INTERVAL_DAY, alarmIntent);
-        }        
+        manager.scheduleAlarms(getApplicationContext());
     }
     
     @SuppressWarnings("unused")

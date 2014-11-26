@@ -18,6 +18,7 @@
                 android:id="@+id/textViewNumber"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_marginTop="5dp"
                 android:text="@string/_01"
                 android:textAppearance="@style/QText" />
 
@@ -27,6 +28,7 @@
                 android:layout_height="wrap_content"
                 android:layout_alignParentTop="true"
                 android:layout_marginLeft="5dp"
+                android:layout_marginTop="5dp"
                 android:layout_toRightOf="@id/textViewNumber"
                 android:text="@string/lorem_ipsum"
                 android:textAppearance="@style/QText" />
