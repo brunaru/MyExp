@@ -59,8 +59,6 @@ public class QuestionnaireActivity extends Activity {
         long dateMs = date.getTime();
         answersGroup.setDateMs(dateMs);
         answersGroup.setAnswers(answers);
-        
-        final int colorId = Resources.getSystem().getIdentifier("btn_check_holo_light", "drawable", "android");
 
         List<MultipleChoice> multiqs = questionnnaire.getQuestions().getMultipleChoiceQuestions();
         List<OpenText> openqs = questionnnaire.getQuestions().getOpenTextQuestions();
@@ -111,7 +109,8 @@ public class QuestionnaireActivity extends Activity {
                     for (String option : options) {
                         RadioButton radio = new RadioButton(getApplicationContext());
                         radio.setText(option);
-                        radio.setTextColor(Color.BLACK);
+                        radio.setTextAppearance(this, R.style.QText);
+                        int colorId = Resources.getSystem().getIdentifier("btn_radio_holo_light", "drawable", "android");
                         radio.setButtonDrawable(colorId);
                         radioGroupMulti.addView(radio);
                     }
@@ -123,9 +122,10 @@ public class QuestionnaireActivity extends Activity {
                     for (String option : options) {
                         CheckBox check = new CheckBox(getApplicationContext());
                         check.setText(option);
-                        check.setTextColor(Color.BLACK);
-                        getResources();                        
-                        check.setButtonDrawable(colorId);
+                        check.setTextAppearance(this, R.style.QText);
+                        getResources();
+                        int colorId = Resources.getSystem().getIdentifier("btn_check_holo_light", "drawable", "android");
+                        check.setButtonDrawable(colorId);                        
                         linearCheck.addView(check);
                     }
                 }

@@ -14,56 +14,29 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content" >
 
-            <TextView
-                android:id="@+id/textViewNumber"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="5dp"
-                android:text="@string/_01"
-                android:textAppearance="@style/QText" />
-
-            <TextView
-                android:id="@+id/textViewQuestion"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignParentTop="true"
-                android:layout_marginLeft="5dp"
-                android:layout_marginTop="5dp"
-                android:layout_toRightOf="@id/textViewNumber"
-                android:text="@string/lorem_ipsum"
-                android:textAppearance="@style/QText" />
+            <include
+       			android:id="@+id/include_head"
+        		android:layout_width="wrap_content"
+        		android:layout_height="wrap_content"
+        		layout="@layout/question_text" >
+        	</include>
 
             <LinearLayout
                 android:id="@+id/linearLayCheckBox"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_centerVertical="true"
-                android:layout_below="@id/textViewQuestion"
+                android:layout_below="@id/include_head"
                 android:layout_marginTop="10dp"
                 android:orientation="vertical" >
             </LinearLayout>
 
-            <Button
-                android:id="@+id/buttonConfirm"
-                android:layout_width="100dp"
-                android:layout_height="wrap_content"
-                android:layout_alignParentBottom="true"
-                android:layout_alignParentRight="true"
+            <include
                 android:layout_below="@id/linearLayCheckBox"
-                android:layout_marginBottom="10dp"
-                android:layout_marginRight="10dp"
-                android:layout_marginTop="10dp"
-                android:text="@string/next" />
-            
-            <Button
-                android:id="@+id/buttonBack"
-                android:layout_width="100dp"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_alignParentBottom="true"
-                android:layout_alignParentLeft="true"
-                android:layout_marginBottom="10dp"
-                android:layout_marginLeft="10dp"
-                android:text="@string/back" />
+                layout="@layout/question_buttons" >                
+            </include>
             
         </RelativeLayout>
     </ScrollView>

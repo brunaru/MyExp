@@ -10,13 +10,13 @@
     <string name="_01">01.</string>
     
     <string name="ok">OK</string>
-    <string name="next">Next</string>
-    <string name="back">Back</string>
-    <string name="open">Open</string>
-    <string name="yes">Yes</string>
-    <string name="no">No</string>
-    <string name="confirm_finish">Finish questionnaire?</string>
-    <string name="error_answer_question">You have to answer the question to continue.</string>
-    <string name="your_answer">Your answer&#8230;</string>
+    <string name="next">Próximo</string>
+    <string name="back">Voltar</string>
+    <string name="open">Abrir</string>
+    <string name="yes">Sim</string>
+    <string name="no">Não</string>
+    <string name="confirm_finish">Terminar o questionário?</string>
+    <string name="error_answer_question">Você precisa responder a questão para continuar.</string>
+    <string name="your_answer">Sua resposta&#8230;</string>
 
 </resources>

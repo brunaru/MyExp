@@ -3,62 +3,34 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent" >
 
-    <TextView
-        android:id="@+id/textViewNumber"
+    <include
+        android:id="@+id/include_head"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentTop="true"
-        android:layout_marginTop="5dp"
-        android:text="@string/_01"
-        android:textAppearance="@style/QText" />
-
-    <TextView
-        android:id="@+id/textViewQuestion"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentTop="true"
-        android:layout_marginLeft="5dp"
-        android:layout_marginTop="5dp"
-        android:layout_toRightOf="@id/textViewNumber"
-        android:text="@string/lorem_ipsum"
-        android:textAppearance="@style/QText" />
+        layout="@layout/question_text" >
+    </include>
 
     <EditText
         android:id="@+id/editTextOpen"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@id/textViewQuestion"
+        android:layout_below="@id/include_head"
         android:layout_marginTop="10dp"
         android:gravity="top"
         android:ems="10"
         android:textColor="@android:color/black"
+        android:textAppearance="@style/QText"
         android:textColorHint="@android:color/darker_gray"
         android:hint="@string/your_answer"
         android:inputType="textMultiLine" >
         <requestFocus />
     </EditText>
-
-    <Button
-        android:id="@+id/buttonConfirm"
-        android:layout_width="100dp"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/editTextOpen"
-        android:layout_marginTop="10dp"
-        android:layout_marginBottom="10dp"
-        android:layout_marginRight="10dp"
-        android:layout_alignParentRight="true"
-        android:text="@string/next" />
     
-    <Button
-        android:id="@+id/buttonBack"
-        android:layout_width="100dp"
+    <include
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignParentLeft="true"
         android:layout_below="@id/editTextOpen"
-        android:layout_marginTop="10dp"
-        android:layout_marginBottom="10dp"
-        android:layout_marginLeft="10dp"
-        android:text="@string/back" />
+        layout="@layout/question_buttons" >
+    </include>
 
 </RelativeLayout>
