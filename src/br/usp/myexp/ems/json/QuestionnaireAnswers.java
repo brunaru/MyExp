@@ -11,6 +11,11 @@ public class QuestionnaireAnswers {
     public QuestionnaireAnswers() {
     }
 
+    public QuestionnaireAnswers(String questionnaireId, List<AnswersGroup> answersGroupList) {
+        this.questionnaireId = questionnaireId;
+        this.answersGroupList = answersGroupList;
+    }
+
     public String getQuestionnaireId() {
         return questionnaireId;
     }

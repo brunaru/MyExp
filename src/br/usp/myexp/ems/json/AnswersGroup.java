@@ -9,6 +9,11 @@ public class AnswersGroup {
     public AnswersGroup() {
     }
 
+    public AnswersGroup(long dateMs, List<Answer> answers) {
+        this.dateMs = dateMs;
+        this.answers = answers;
+    }
+
     private List<Answer> answers;
 
     public long getDateMs() {
