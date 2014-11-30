@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <string name="app_name">MyExp</string>
-    <string name="title_activity_main">MyExp</string>
+    <string name="app_name">SmartESM</string>
+    <string name="title_activity_main">SmartESM</string>
     <string name="hello_world">Hello world!</string>
     
     <string name="lorem_ipsum">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam eget laoreet libero. Integer a nisi.</string>
@@ -18,5 +18,7 @@
     <string name="confirm_finish">Terminar o questionário?</string>
     <string name="error_answer_question">Você precisa responder a questão para continuar.</string>
     <string name="your_answer">Sua resposta&#8230;</string>
+    
+    <string name="intro">Olá! O aplicativo de questionários foi iniciado. Aguarde por notificações.</string>
 
 </resources>

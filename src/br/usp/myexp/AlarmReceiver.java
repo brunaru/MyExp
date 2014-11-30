@@ -15,18 +15,15 @@ public class AlarmReceiver extends BroadcastReceiver {
     public void onReceive(Context context, Intent data) {
         String fileName = data.getStringExtra(Constants.QUESTIONNAIRE_FILE);
         setNotification(context, fileName);
-        //Intent intent = new Intent(context, QuestionnaireActivity.class);
-        //intent.putExtra(Constants.QUESTIONNAIRE_FILE, fileName);
-        //intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-        //context.startActivity(intent);
     }
     
     private void setNotification(Context context, String fileName) {
-        int notificationId = 001;
+        int notificationId = 1;
         NotificationCompat.Builder notification = new NotificationCompat.Builder(context).setSmallIcon(R.drawable.notification_icon)
                 .setContentTitle("Questionnaire").setContentText("Please, answer this questionnaire. :)");
         notification.setPriority(NotificationCompat.PRIORITY_MAX);
         notification.setDefaults(Notification.DEFAULT_ALL);
+        notification.setAutoCancel(true);
         
         Intent intent = new Intent(context, QuestionnaireActivity.class);
         intent.putExtra(Constants.QUESTIONNAIRE_FILE, fileName);

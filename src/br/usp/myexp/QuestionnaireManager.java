@@ -169,13 +169,13 @@ public class QuestionnaireManager {
     public void scheduleAlarms(Context context) {
         File dir = getDir();
         File[] files = dir.listFiles(new MyFileNameFilter(".xml"));
-        Boolean first = true;
+        int requestCode = 0;
         for (File file : files) {
             String fileName = file.getName();
             Questionnnaire ques = readQuestionnaire(fileName);
             if (ques != null) {                
-                scheduleAlarms(context, fileName, ques, first);
-                first = false;
+                scheduleAlarms(context, fileName, ques, requestCode);
+                requestCode++;
             }
         }
     }
@@ -196,15 +196,15 @@ public class QuestionnaireManager {
         
     }
     
-    private void scheduleAlarms(Context context, String fileName, Questionnnaire ques, Boolean first) {
+    private void scheduleAlarms(Context context, String fileName, Questionnnaire ques, int requestCode) {
         List<String> times = ques.getTriggers().getTimes();
         AlarmManager alarmMgr = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
         Intent intent = new Intent(context, AlarmReceiver.class);
         intent.putExtra(Constants.QUESTIONNAIRE_FILE, fileName);
-        PendingIntent alarmIntent = PendingIntent.getBroadcast(context, 0, intent, 0);
-        if (first) {
-            alarmMgr.cancel(alarmIntent);
-        }
+        intent.setAction("actionstring" + requestCode);
+        PendingIntent alarmIntent = PendingIntent.getBroadcast(context, requestCode, intent, PendingIntent.FLAG_ONE_SHOT);
+        alarmMgr.cancel(alarmIntent);
+
         for (String time : times) {
             int dotsPos = time.indexOf(":");
             int hour = Integer.valueOf(time.substring(0, dotsPos));

@@ -14,7 +14,7 @@
         android:minWidth="120dp"
         android:text="@string/next"
         android:textAppearance="@style/BText"
-        android:background="@drawable/button_blue" />
+        android:background="@drawable/button_blue_custom" />
 
     <Button
         android:id="@+id/buttonBack"
@@ -27,6 +27,6 @@
         android:minWidth="120dp"
         android:text="@string/back"
         android:textAppearance="@style/BText"
-        android:background="@drawable/button_yellow" />
+        android:background="@drawable/button_yellow_custom" />
 
 </RelativeLayout>
