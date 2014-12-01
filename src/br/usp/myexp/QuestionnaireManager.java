@@ -176,8 +176,7 @@ public class QuestionnaireManager {
             String fileName = file.getName();
             Questionnnaire ques = readQuestionnaire(fileName);
             if (ques != null) {                
-                scheduleAlarms(context, fileName, ques, requestCode);
-                requestCode++;
+                requestCode = scheduleAlarms(context, fileName, ques, requestCode);
             }
         }
     }
@@ -198,16 +197,17 @@ public class QuestionnaireManager {
         
     }
     
-    private void scheduleAlarms(Context context, String fileName, Questionnnaire ques, int requestCode) {
+    private int scheduleAlarms(Context context, String fileName, Questionnnaire ques, int requestCode) {
         List<String> times = ques.getTriggers().getTimes();
         AlarmManager alarmMgr = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
         Intent intent = new Intent(fileName, Uri.parse(fileName), context, AlarmReceiver.class);
         intent.putExtra(Constants.QUESTIONNAIRE_FILE, fileName);
-        PendingIntent alarmIntent = PendingIntent.getBroadcast(context, requestCode, intent, PendingIntent.FLAG_UPDATE_CURRENT);
-        alarmMgr.cancel(alarmIntent);
+        
         Log.d("QuestionnaireManager", "requestCode: " + requestCode + ", fileName: " + fileName);
 
         for (String time : times) {
+            PendingIntent alarmIntent = PendingIntent.getBroadcast(context, requestCode, intent, PendingIntent.FLAG_UPDATE_CURRENT);
+            requestCode++;
             int dotsPos = time.indexOf(":");
             int hour = Integer.valueOf(time.substring(0, dotsPos));
             int min = Integer.valueOf(time.substring(dotsPos + 1));
@@ -218,6 +218,8 @@ public class QuestionnaireManager {
             alarmMgr.setRepeating(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), AlarmManager.INTERVAL_DAY, alarmIntent);
             Log.d("QuestionnaireManager", "alarmset: " + hour + ":"+ min);
         }
+        
+        return requestCode;
     }
 
 }
