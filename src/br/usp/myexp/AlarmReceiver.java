@@ -1,9 +1,12 @@
 package br.usp.myexp;
 
+import java.io.File;
+
 import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.BroadcastReceiver;
+import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
@@ -22,11 +25,14 @@ public class AlarmReceiver extends BroadcastReceiver {
     
     private void setNotification(Context context, String fileName) {
         int notificationId = 1;
-        NotificationCompat.Builder notification = new NotificationCompat.Builder(context).setSmallIcon(R.drawable.notification_icon)
-                .setContentTitle("Questionnaire").setContentText("Please, answer this questionnaire. :)");
+        NotificationCompat.Builder notification = new NotificationCompat.Builder(context).setSmallIcon(R.drawable.ic_stat_notify_qst)
+                .setContentTitle("Questionnaire").setContentText(context.getResources().getString(R.string.answer_questionnaire));
         notification.setPriority(NotificationCompat.PRIORITY_MAX);
         notification.setDefaults(Notification.DEFAULT_ALL);
         notification.setAutoCancel(true);
+        Uri alarmSound = Uri.parse(ContentResolver.SCHEME_ANDROID_RESOURCE + "://" + context.getPackageName() + File.separator
+                + R.raw.notification_sound);
+        notification.setSound(alarmSound);
         
         Intent intent = new Intent(fileName, Uri.parse(fileName), context, QuestionnaireActivity.class);
         intent.putExtra(Constants.QUESTIONNAIRE_FILE, fileName);

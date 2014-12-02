@@ -13,6 +13,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.res.Resources;
 import android.os.Bundle;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -36,8 +37,6 @@ import br.usp.myexp.ems.xml.OpenText;
 import br.usp.myexp.ems.xml.Questionnnaire;
 
 public class QuestionnaireActivity extends Activity {
-
-    private boolean backPressed = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -148,6 +147,7 @@ public class QuestionnaireActivity extends Activity {
 
             final Button buttonConfirm = (Button) layout.findViewById(R.id.buttonConfirm);
             final Button buttonBack = (Button) layout.findViewById(R.id.buttonBack);
+            
             if (questionNumber == numberQuestions) {
                 /* Last question. */
                 buttonConfirm.setText(R.string.ok);
@@ -155,7 +155,8 @@ public class QuestionnaireActivity extends Activity {
             /* Button Confirm. */
             buttonConfirm.setOnClickListener(new OnClickListener() {
                 @Override
-                public void onClick(View arg0) {
+                public void onClick(View view) {
+                    view.playSoundEffect(android.view.SoundEffectConstants.CLICK);
                     EditText editTextOpen = (EditText) layout.findViewById(R.id.editTextOpen);
                     String answerText = "";
                     Boolean obligatory = true;
@@ -192,11 +193,6 @@ public class QuestionnaireActivity extends Activity {
                     }
 
                     if (!answerText.isEmpty() || obligatory == false) {
-                        Toast.makeText(getApplicationContext(), answerText, Toast.LENGTH_SHORT).show();
-                        if (backPressed) {
-                            answers.remove(answers.size() - 1);
-                            backPressed = false;
-                        }
                         Answer answer = new Answer(questionNumber, answerText);
                         answers.add(answer);
                         if (questionNumber == numberQuestions) {
@@ -208,7 +204,9 @@ public class QuestionnaireActivity extends Activity {
                             setContentView(layouts.get(questionNumber));
                         }
                     } else {
-                        Toast.makeText(getApplicationContext(), R.string.error_answer_question, Toast.LENGTH_SHORT).show();
+                        Toast toast = Toast.makeText(getApplicationContext(), R.string.error_answer_question, Toast.LENGTH_LONG);
+                        toast.setGravity(Gravity.CENTER_VERTICAL, 0, 0);
+                        toast.show();
                     }
 
                     InputMethodManager inputManager = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
@@ -216,6 +214,7 @@ public class QuestionnaireActivity extends Activity {
 
                 }
             });
+            
             /* Button Back. */
             if (questionNumber == 1) {
                 /* First question. */
@@ -223,12 +222,12 @@ public class QuestionnaireActivity extends Activity {
             }
             buttonBack.setOnClickListener(new OnClickListener() {
                 @Override
-                public void onClick(View arg0) {
-                    if (questionNumber != 1) {
-                        InputMethodManager inputManager = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
-                        inputManager.hideSoftInputFromWindow(buttonBack.getWindowToken(), 0);
-                        setContentView(layouts.get(questionNumber - 2));
-                    }
+                public void onClick(View view) {
+                    view.playSoundEffect(android.view.SoundEffectConstants.CLICK);
+                    answers.remove(answers.size() - 1);
+                    InputMethodManager inputManager = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+                    inputManager.hideSoftInputFromWindow(buttonBack.getWindowToken(), 0);
+                    setContentView(layouts.get(questionNumber - 2));
                 }
             });
         }
@@ -248,6 +247,7 @@ public class QuestionnaireActivity extends Activity {
             }
         }).setNegativeButton(R.string.no, new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int id) {
+                answersGroup.getAnswers().remove(answersGroup.getAnswers().size() - 1);
                 dialog.cancel();
             }
         });
@@ -258,7 +258,6 @@ public class QuestionnaireActivity extends Activity {
     public void onBackPressed() {
         Button buttonBack = (Button) findViewById(R.id.buttonBack);
         if (buttonBack != null) {
-            backPressed = true;
             buttonBack.performClick();
         }
     }

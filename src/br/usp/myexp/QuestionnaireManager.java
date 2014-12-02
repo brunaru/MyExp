@@ -215,7 +215,11 @@ public class QuestionnaireManager {
             calendar.setTimeInMillis(System.currentTimeMillis());
             calendar.set(Calendar.HOUR_OF_DAY, hour);
             calendar.set(Calendar.MINUTE, min);
-            alarmMgr.setRepeating(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), AlarmManager.INTERVAL_DAY, alarmIntent);
+            // if alarm is in the past add one day
+            if (calendar.getTimeInMillis() < System.currentTimeMillis()) {
+                calendar.add(Calendar.DAY_OF_MONTH, 1);
+            }
+            alarmMgr.setRepeating(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), AlarmManager.INTERVAL_DAY, alarmIntent);            
             Log.d("QuestionnaireManager", "alarmset: " + hour + ":"+ min);
         }
         

@@ -18,7 +18,7 @@
     <string name="confirm_finish">Terminar o questionário?</string>
     <string name="error_answer_question">Você precisa responder a questão para continuar.</string>
     <string name="your_answer">Sua resposta&#8230;</string>
-    
+    <string name="answer_questionnaire">Por favor, responda este questionário.</string>
     <string name="intro">Olá! O aplicativo de questionários foi iniciado. Aguarde por notificações.</string>
 
 </resources>
