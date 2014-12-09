@@ -9,6 +9,7 @@
         android:targetSdkVersion="21" />
 
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.GET_ACCOUNTS"/>
 
     <application
         android:allowBackup="true"
@@ -30,7 +31,7 @@
             android:screenOrientation="portrait" >
         </activity>
         
-        <receiver android:name="br.usp.myexp.AlarmReceiver">
+        <receiver android:name="br.usp.myexp.receivers.AlarmReceiver">
         </receiver>
         
         <receiver

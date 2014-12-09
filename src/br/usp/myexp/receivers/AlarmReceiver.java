@@ -1,4 +1,4 @@
-package br.usp.myexp;
+package br.usp.myexp.receivers;
 
 import java.io.File;
 
@@ -12,6 +12,8 @@ import android.content.Intent;
 import android.net.Uri;
 import android.support.v4.app.NotificationCompat;
 import android.util.Log;
+import br.usp.myexp.Constants;
+import br.usp.myexp.R;
 import br.usp.myexp.ui.QuestionnaireActivity;
 
 public class AlarmReceiver extends BroadcastReceiver {
@@ -19,14 +21,18 @@ public class AlarmReceiver extends BroadcastReceiver {
     @Override
     public void onReceive(Context context, Intent data) {
         String fileName = data.getStringExtra(Constants.QUESTIONNAIRE_FILE);
-        Log.d("AlarmReceiver", "fileName: " + fileName);
-        setNotification(context, fileName);
+        String questionnaireName = data.getStringExtra(Constants.QUESTIONNAIRE_NAME);
+        Log.d("AlarmReceiver", "fileName: " + fileName + ", questionnaireName: " + questionnaireName);
+        setNotification(context, fileName, questionnaireName);
     }
     
-    private void setNotification(Context context, String fileName) {
+    private void setNotification(Context context, String fileName, String questionnaireName) {
         int notificationId = 1;
+        String title = context.getResources().getString(R.string.questionnaire);
+        String text = context.getResources().getString(R.string.answer_questionnaire_p1) + " "
+                + questionnaireName + " " + context.getResources().getString(R.string.answer_questionnaire_p2);
         NotificationCompat.Builder notification = new NotificationCompat.Builder(context).setSmallIcon(R.drawable.ic_stat_notify_qst)
-                .setContentTitle("Questionnaire").setContentText(context.getResources().getString(R.string.answer_questionnaire));
+                .setContentTitle(title).setContentText(text);
         notification.setPriority(NotificationCompat.PRIORITY_MAX);
         notification.setDefaults(Notification.DEFAULT_ALL);
         notification.setAutoCancel(true);

@@ -14,6 +14,7 @@
         android:id="@+id/editTextOpen"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:minHeight="100dp"
         android:layout_below="@id/include_head"
         android:layout_marginTop="10dp"
         android:gravity="top"
@@ -22,6 +23,9 @@
         android:textAppearance="@style/QText"
         android:textColorHint="@android:color/darker_gray"
         android:hint="@string/your_answer"
+        android:background="@drawable/edit_text_custom"
+        android:layout_margin="10dp"
+        android:padding="10dp"
         android:inputType="textMultiLine" >
         <requestFocus />
     </EditText>

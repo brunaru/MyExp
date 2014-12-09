@@ -25,18 +25,25 @@ import android.widget.LinearLayout;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.RelativeLayout;
+import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
 import br.usp.myexp.Constants;
 import br.usp.myexp.QuestionnaireManager;
 import br.usp.myexp.R;
+import br.usp.myexp.Util;
 import br.usp.myexp.ems.json.Answer;
 import br.usp.myexp.ems.json.AnswersGroup;
 import br.usp.myexp.ems.xml.MultipleChoice;
 import br.usp.myexp.ems.xml.OpenText;
 import br.usp.myexp.ems.xml.Questionnnaire;
+import br.usp.myexp.log.Logger;
+import br.usp.myexp.log.QuestionnaireEvent;
 
 public class QuestionnaireActivity extends Activity {
+    
+    private String questionnaireId;
+    final private Logger logger = new Logger();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -50,6 +57,7 @@ public class QuestionnaireActivity extends Activity {
 
         final QuestionnaireManager manager = new QuestionnaireManager();
         final Questionnnaire questionnnaire = manager.readQuestionnaire(fileName);
+        questionnaireId = questionnnaire.getId();
         
         final AnswersGroup answersGroup = new AnswersGroup();
         final List<Answer> answers = new ArrayList<Answer>();
@@ -85,9 +93,10 @@ public class QuestionnaireActivity extends Activity {
         for (int k = 1; k <= numberQuestions; k++) {
 
             final RelativeLayout layout;
-            String number;
-            String text;
+            final String number;
+            final String text;
             final int questionNumber = k;
+            @SuppressWarnings("unused")
             final boolean obligatory;
 
             String pos = positions.get(k);
@@ -100,31 +109,55 @@ public class QuestionnaireActivity extends Activity {
                 obligatory = question.getObligatory();
 
                 if (question.getOnlyone() == true) {
-                    /* Radio. */
+                    /* RADIO. */
                     layout = (RelativeLayout) inflater.inflate(R.layout.question_multi_onlyone, null);
                     RadioGroup radioGroupMulti = (RadioGroup) layout.findViewById(R.id.radioGroupMulti);
                     List<String> options = question.getOptions();
-                    for (String option : options) {
-                        RadioButton radio = new RadioButton(getApplicationContext());
+                    for (final String option : options) {
+                        final RadioButton radio = new RadioButton(getApplicationContext());
                         radio.setText(option);
                         radio.setTextAppearance(this, R.style.QText);
+                        radio.setPadding(0, 5, 0, 10);
                         int colorId = Resources.getSystem().getIdentifier("btn_radio_holo_light", "drawable", "android");
                         radio.setButtonDrawable(colorId);
                         radioGroupMulti.addView(radio);
+                        
+                        /* Logger */
+                        radio.setOnClickListener(new OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+                                QuestionnaireEvent event = new QuestionnaireEvent(questionnaireId, Util.getDate(),
+                                        Logger.RADIO_CLICK_EVENT, number, option);
+                                logger.logQuestionnaireEvent(event);
+                            }
+                        });
+                        
                     }
                 } else {
-                    /* Checkbox. */
+                    /* CHECKBOX. */
                     layout = (RelativeLayout) inflater.inflate(R.layout.question_multi_check, null);
                     LinearLayout linearCheck = (LinearLayout) layout.findViewById(R.id.linearLayCheckBox);
                     List<String> options = question.getOptions();
-                    for (String option : options) {
+                    for (final String option : options) {
                         CheckBox check = new CheckBox(getApplicationContext());
                         check.setText(option);
                         check.setTextAppearance(this, R.style.QText);
+                        check.setPadding(0, 5, 0, 10);
                         getResources();
                         int colorId = Resources.getSystem().getIdentifier("btn_check_holo_light", "drawable", "android");
-                        check.setButtonDrawable(colorId);                        
+                        check.setButtonDrawable(colorId);
                         linearCheck.addView(check);
+                        
+                        /* Logger */
+                        check.setOnClickListener(new OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+                                QuestionnaireEvent event = new QuestionnaireEvent(questionnaireId, Util.getDate(),
+                                        Logger.CHECKBOX_CLICK_EVENT, number, option);
+                                logger.logQuestionnaireEvent(event);
+                            }
+                        });
+                        
                     }
                 }
 
@@ -136,15 +169,58 @@ public class QuestionnaireActivity extends Activity {
                 text = question.getText();
                 obligatory = question.getObligatory();
                 layout = (RelativeLayout) inflater.inflate(R.layout.question_opentext, null);
+                EditText editTextOpen = (EditText) layout.findViewById(R.id.editTextOpen);
+                /* Logger */
+                editTextOpen.setOnClickListener(new OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        QuestionnaireEvent event = new QuestionnaireEvent(questionnaireId, Util.getDate(),
+                                Logger.EDIT_TEXT_CLICK_EVENT, number, "editText");
+                        logger.logQuestionnaireEvent(event);
+                    }
+                });
             }
-            /* Common fields. */
+            
+            /* Logger */
+            layout.setOnClickListener(new OnClickListener() {                
+                @Override
+                public void onClick(View v) {
+                    QuestionnaireEvent event = new QuestionnaireEvent(questionnaireId, Util.getDate(), Logger.LAYOUT_CLICK_EVENT, number);            
+                    logger.logQuestionnaireEvent(event);
+                }
+            });
+            View scrollView = layout.findViewById(R.id.scrollView);            
+            if (scrollView != null) {
+                ScrollView scrollViewReal = (ScrollView) scrollView;
+                scrollViewReal.setOnClickListener(new OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        QuestionnaireEvent event = new QuestionnaireEvent(questionnaireId, Util.getDate(), Logger.LAYOUT_CLICK_EVENT, number);
+                        logger.logQuestionnaireEvent(event);
+                    }
+                });
+            }
+            
+            /* Add layout to list. */
+            layouts.add(layout);
+            
+            
+            /* COMMON text and number fields. */
             TextView textViewNumber = (TextView) layout.findViewById(R.id.textViewNumber);
             TextView textViewQuestion = (TextView) layout.findViewById(R.id.textViewQuestion);
             textViewNumber.setText(number + ".");
             textViewQuestion.setText(text);
-            /* Add to list. */
-            layouts.add(layout);
+            /* Logger */
+            textViewQuestion.setOnClickListener(new OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    QuestionnaireEvent event = new QuestionnaireEvent(questionnaireId, Util.getDate(),
+                            Logger.TEXT_CLICK_EVENT, number, text);
+                    logger.logQuestionnaireEvent(event);
+                }
+            });
 
+            /* BUTTONS. */
             final Button buttonConfirm = (Button) layout.findViewById(R.id.buttonConfirm);
             final Button buttonBack = (Button) layout.findViewById(R.id.buttonBack);
             
@@ -193,11 +269,11 @@ public class QuestionnaireActivity extends Activity {
                     }
 
                     if (!answerText.isEmpty() || obligatory == false) {
-                        Answer answer = new Answer(questionNumber, answerText);
+                        final Answer answer = new Answer(questionNumber, answerText);
                         answers.add(answer);
                         if (questionNumber == numberQuestions) {
                             /* Last question. */
-                            AlertDialog dialog = confirmFinishDialog(manager, answersGroup, questionnnaire.getId());
+                            AlertDialog dialog = confirmFinishDialog(manager, answersGroup, questionnnaire.getId(), number);
                             dialog.show();
                         } else {
                             /* Next. */
@@ -205,13 +281,21 @@ public class QuestionnaireActivity extends Activity {
                         }
                     } else {
                         Toast toast = Toast.makeText(getApplicationContext(), R.string.error_answer_question, Toast.LENGTH_LONG);
+                        LinearLayout toastLayout = (LinearLayout) toast.getView();
+                        TextView toastTV = (TextView) toastLayout.getChildAt(0);
+                        toastTV.setTextSize(22);
+                        toastTV.setAlpha(1);
                         toast.setGravity(Gravity.CENTER_VERTICAL, 0, 0);
                         toast.show();
                     }
 
                     InputMethodManager inputManager = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
                     inputManager.hideSoftInputFromWindow(buttonConfirm.getWindowToken(), 0);
-
+                    
+                    /* Logger */
+                    QuestionnaireEvent event = new QuestionnaireEvent(questionnaireId, Util.getDate(),
+                                    Logger.BUTTON_CLICK_EVENT, number, "buttonConfirm", answerText);
+                    logger.logQuestionnaireEvent(event);
                 }
             });
             
@@ -228,6 +312,10 @@ public class QuestionnaireActivity extends Activity {
                     InputMethodManager inputManager = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
                     inputManager.hideSoftInputFromWindow(buttonBack.getWindowToken(), 0);
                     setContentView(layouts.get(questionNumber - 2));
+                    /* Logger */
+                    QuestionnaireEvent event = new QuestionnaireEvent(questionnaireId, Util.getDate(),
+                                    Logger.BUTTON_CLICK_EVENT, number, "buttonBack");
+                    logger.logQuestionnaireEvent(event);
                 }
             });
         }
@@ -238,16 +326,24 @@ public class QuestionnaireActivity extends Activity {
     }
 
     private AlertDialog confirmFinishDialog(final QuestionnaireManager manager, final AnswersGroup answersGroup,
-            final String questionnaireId) {
+            final String questionnaireId, final String number) {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setMessage(R.string.confirm_finish).setPositiveButton(R.string.yes, new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int id) {
-                manager.writeQuestionAnswers(answersGroup, questionnaireId);
+                manager.writeQuestionAnswers(answersGroup, questionnaireId, getApplicationContext());
+                /* Logger */
+                QuestionnaireEvent event = new QuestionnaireEvent(questionnaireId, Util.getDate(), 
+                        Logger.DIALOG_CLICK_EVENT, number, getResources().getString(R.string.yes));
+                logger.logQuestionnaireEvent(event);
                 finish();
             }
         }).setNegativeButton(R.string.no, new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int id) {
                 answersGroup.getAnswers().remove(answersGroup.getAnswers().size() - 1);
+                /* Logger */
+                QuestionnaireEvent event = new QuestionnaireEvent(questionnaireId, Util.getDate(), 
+                        Logger.DIALOG_CLICK_EVENT, number, getResources().getString(R.string.no));
+                logger.logQuestionnaireEvent(event);
                 dialog.cancel();
             }
         });
@@ -256,8 +352,13 @@ public class QuestionnaireActivity extends Activity {
 
     @Override
     public void onBackPressed() {
-        Button buttonBack = (Button) findViewById(R.id.buttonBack);
-        if (buttonBack != null) {
+        View buttonBackView = findViewById(R.id.buttonBack);
+        if (buttonBackView != null && buttonBackView.isShown()) {
+            /* Logger */
+            Button buttonBack = (Button) buttonBackView;
+            TextView textViewNumber = (TextView) findViewById(R.id.textViewNumber);
+            QuestionnaireEvent event = new QuestionnaireEvent(questionnaireId, Util.getDate(), Logger.BACK_CLICK_EVENT, textViewNumber.getText().toString());            
+            logger.logQuestionnaireEvent(event);
             buttonBack.performClick();
         }
     }

@@ -6,13 +6,16 @@ public class QuestionnaireAnswers {
     
     private String questionnaireId;
     
+    private String userId;
+    
     private List<AnswersGroup> answersGroupList;
 
     public QuestionnaireAnswers() {
     }
 
-    public QuestionnaireAnswers(String questionnaireId, List<AnswersGroup> answersGroupList) {
+    public QuestionnaireAnswers(String questionnaireId, String userId, List<AnswersGroup> answersGroupList) {
         this.questionnaireId = questionnaireId;
+        this.userId = userId;
         this.answersGroupList = answersGroupList;
     }
 
@@ -30,6 +33,14 @@ public class QuestionnaireAnswers {
 
     public void setAnswersGroups(List<AnswersGroup> answersGroupList) {
         this.answersGroupList = answersGroupList;
+    }
+
+    public String getUserId() {
+        return userId;
+    }
+
+    public void setUserId(String userId) {
+        this.userId = userId;
     }
 
 }

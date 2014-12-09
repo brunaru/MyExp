@@ -24,20 +24,18 @@ import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
-import android.os.Environment;
 import android.util.Log;
 import br.usp.myexp.ems.json.AnswersGroup;
 import br.usp.myexp.ems.json.QuestionnaireAnswers;
 import br.usp.myexp.ems.xml.Questionnnaire;
+import br.usp.myexp.receivers.AlarmReceiver;
 
 import com.google.gson.Gson;
 
 public class QuestionnaireManager {
 
-    private static String MY_EXP_DIR = "MyExp";
-
     public Questionnnaire readQuestionnaire(String fileName) {
-        File dir = getDir();
+        File dir = Util.getDir();
         if (dir != null) {
             Serializer serializer = new Persister();
             File src = new File(dir, fileName);
@@ -52,7 +50,7 @@ public class QuestionnaireManager {
     }
 
     public boolean writeQuestionnaire(Questionnnaire obj, String fileName) {
-        File dir = getDir();
+        File dir = Util.getDir();
         if (dir != null) {
             Serializer serializer = new Persister();
             File src = new File(dir, fileName);
@@ -65,21 +63,9 @@ public class QuestionnaireManager {
         }
         return false;
     }
-
-    private File getDir() {
-        String state = Environment.getExternalStorageState();
-        if (Environment.MEDIA_MOUNTED.equals(state)) {
-            String path = Environment.getExternalStorageDirectory().getPath() + File.separator + MY_EXP_DIR;
-            File dir = new File(path);
-            if (!dir.exists()) {
-                dir.mkdir();
-            }
-            return dir;
-        }
-        return null;
-    }
     
-    private boolean writeQuestionAnswerXml(String fileName, String questionNumber, String answer) {
+    @Deprecated
+    public boolean writeQuestionAnswerXml(String fileName, String questionNumber, String answer) {
         try {
             FileWriter writer = new FileWriter(fileName, true);
             writer.append(questionNumber);
@@ -95,8 +81,8 @@ public class QuestionnaireManager {
         return false;
     }
     
-    @SuppressWarnings("unused")
-    private boolean reWriteQuestionAnswerXml(String fileName, String questionNumber, String answer) {
+    @Deprecated
+    public boolean reWriteQuestionAnswerXml(String fileName, String questionNumber, String answer) {
         try {
             File file = new File(fileName);
             List<String> lines = FileUtils.readLines(file);
@@ -110,9 +96,9 @@ public class QuestionnaireManager {
         return false;
     }
     
-    @SuppressWarnings("unused")
-    private String getAnswersFileNameXml(String questionnaireId) {
-        File dir = getDir();
+    @Deprecated
+    public String getAnswersFileName(String questionnaireId) {
+        File dir = Util.getDir();
         if (dir != null) {            
             DateFormat dateFormat = new SimpleDateFormat("HH-mm-ss_dd-MM-yyyy", Locale.getDefault());
             Date date = new Date();
@@ -132,8 +118,8 @@ public class QuestionnaireManager {
         return null;
     }
     
-    public boolean writeQuestionAnswers(AnswersGroup answersGroup, String questionnaireId) {
-        File dir = getDir();
+    public boolean writeQuestionAnswers(AnswersGroup answersGroup, String questionnaireId, Context context) {
+        File dir = Util.getDir();
         if (dir != null) {
             String fileName = dir + File.separator + questionnaireId + ".json";
             File file = new File(fileName);
@@ -148,6 +134,7 @@ public class QuestionnaireManager {
                 } else {
                     jsonObj = new QuestionnaireAnswers();
                     jsonObj.setQuestionnaireId(questionnaireId);
+                    jsonObj.setUserId(Util.getGoogleUserId(context));
                     List<AnswersGroup> groups = new ArrayList<AnswersGroup>();
                     groups.add(answersGroup);
                     jsonObj.setAnswersGroups(groups);
@@ -169,7 +156,7 @@ public class QuestionnaireManager {
     }
     
     public void scheduleAlarms(Context context) {
-        File dir = getDir();
+        File dir = Util.getDir();
         File[] files = dir.listFiles(new MyFileNameFilter(".xml"));
         int requestCode = 0;
         for (File file : files) {
@@ -181,8 +168,22 @@ public class QuestionnaireManager {
         }
     }
     
+    public List<String> getAllQuestionnairesFiles() {
+        File dir = Util.getDir();
+        File[] files = dir.listFiles(new MyFileNameFilter(".xml"));
+        List<String> list = new ArrayList<String>();
+        for (File file : files) {
+            String fileName = file.getName();
+            Questionnnaire ques = readQuestionnaire(fileName);
+            if (ques != null) {
+                list.add(fileName);
+            }
+        }
+        return list;
+    }
+    
     @SuppressLint("DefaultLocale")
-    public static class MyFileNameFilter implements FilenameFilter {
+    private static class MyFileNameFilter implements FilenameFilter {
         
         private String extension;
 
@@ -202,6 +203,7 @@ public class QuestionnaireManager {
         AlarmManager alarmMgr = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
         Intent intent = new Intent(fileName, Uri.parse(fileName), context, AlarmReceiver.class);
         intent.putExtra(Constants.QUESTIONNAIRE_FILE, fileName);
+        intent.putExtra(Constants.QUESTIONNAIRE_NAME, ques.getName());
         
         Log.d("QuestionnaireManager", "requestCode: " + requestCode + ", fileName: " + fileName);
 
