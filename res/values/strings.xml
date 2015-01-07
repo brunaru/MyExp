@@ -4,11 +4,9 @@
     <string name="app_name">SmartESM</string>
     <string name="title_activity_main">SmartESM</string>
     <string name="hello_world">Hello world!</string>
-    
     <string name="lorem_ipsum">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam eget laoreet libero. Integer a nisi.</string>
     <string name="dummy">Dummy</string>
     <string name="_01">01.</string>
-    
     <string name="ok">OK</string>
     <string name="next">Next</string>
     <string name="back">Back</string>
@@ -22,6 +20,7 @@
     <string name="intro">The questionnaire application is working. Wait for notifications.</string>
     <string name="questionnaire">Questionnaire</string>
     <string name="finish">Finish</string>
-    <string name="confirm_exit">Exit and close questionnaire?</string>
+    <string name="confirm_exit">Exit questionnaire?</string>
+    <string name="activity_thanks">Thank you for answering the questionnaire.</string>
 
 </resources>

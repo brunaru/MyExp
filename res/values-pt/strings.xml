@@ -22,6 +22,7 @@
     <string name="intro">O aplicativo de questionários está funcionando. Aguarde por notificações.</string>
     <string name="questionnaire">Questionário</string>
     <string name="finish">Terminar</string>
-    <string name="confirm_exit">Sair e fechar o questionário?</string>
+    <string name="confirm_exit">Sair do questionário?</string>
+    <string name="activity_thanks">Obrigado por responder o questionário.</string>
     
 </resources>

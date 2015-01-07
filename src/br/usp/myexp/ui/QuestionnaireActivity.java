@@ -11,6 +11,7 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.content.res.Resources;
 import android.os.Bundle;
 import android.view.Gravity;
@@ -335,15 +336,15 @@ public class QuestionnaireActivity extends Activity {
     private AlertDialog confirmFinishDialog(final QuestionnaireManager manager, final AnswersGroup answersGroup,
             final String questionnaireId, final String number) {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        final Intent intent = new Intent(this, ThanksActivity.class);
         builder.setMessage(R.string.confirm_finish).setPositiveButton(R.string.yes, new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int id) {
                 manager.writeQuestionAnswers(answersGroup, questionnaireId, getApplicationContext());
                 /* Logger */
                 QuestionnaireEvent event = new QuestionnaireEvent(questionnaireId, Util.getDate(), 
                         Logger.DIALOG_CLICK_EVENT, number, getResources().getString(R.string.yes));
-                logger.logQuestionnaireEvent(event);
-                finish();
-                System.exit(0);
+                logger.logQuestionnaireEvent(event);                
+                startActivity(intent);
             }
         }).setNegativeButton(R.string.no, new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int id) {
@@ -367,7 +368,6 @@ public class QuestionnaireActivity extends Activity {
                         Logger.DIALOG_CLICK_EVENT, "1", getResources().getString(R.string.yes));
                 logger.logQuestionnaireEvent(event);                
                 finish();
-                System.exit(0);
             }
         }).setNegativeButton(R.string.no, new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int id) {
