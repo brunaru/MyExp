@@ -28,5 +28,10 @@
         <item name="android:textColor">@android:color/black</item>
         <item name="android:textSize">22sp</item>
     </style>
+    
+    <style name="BText" parent="@android:style/Widget.Button">
+        <item name="android:textColor">@android:color/black</item>>
+        <item name="android:textSize">22sp</item>
+    </style>
 
 </resources>

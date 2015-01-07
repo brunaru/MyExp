@@ -18,9 +18,10 @@
     <string name="confirm_finish">Finish questionnaire?</string>
     <string name="error_answer_question">You have to answer the question to continue.</string>
     <string name="your_answer">Your answer&#8230;</string>
-    <string name="answer_questionnaire_p1">Please, answer the</string>
-    <string name="answer_questionnaire_p2">questionnaire.</string>
-    <string name="intro">Hello! The questionnaire application has started. Wait for notifications.</string>
+    <string name="answer_questionnaire">Please, answer this questionnaire.</string>
+    <string name="intro">The questionnaire application is working. Wait for notifications.</string>
     <string name="questionnaire">Questionnaire</string>
+    <string name="finish">Finish</string>
+    <string name="confirm_exit">Exit and close questionnaire?</string>
 
 </resources>

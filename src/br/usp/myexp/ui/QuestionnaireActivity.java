@@ -96,7 +96,6 @@ public class QuestionnaireActivity extends Activity {
             final String number;
             final String text;
             final int questionNumber = k;
-            @SuppressWarnings("unused")
             final boolean obligatory;
 
             String pos = positions.get(k);
@@ -105,8 +104,12 @@ public class QuestionnaireActivity extends Activity {
                 int realPos = Integer.valueOf(pos.substring(1));
                 MultipleChoice question = multiqs.get(realPos);
                 number = String.valueOf(question.getNumber());
-                text = question.getText();
                 obligatory = question.getObligatory();
+                if (obligatory) {
+                    text = question.getText() + "*";
+                } else {
+                    text = question.getText();
+                }
 
                 if (question.getOnlyone() == true) {
                     /* RADIO. */
@@ -165,9 +168,13 @@ public class QuestionnaireActivity extends Activity {
                 /* Open text question */
                 int realPos = Integer.valueOf(pos.substring(1));
                 OpenText question = openqs.get(realPos);
-                number = String.valueOf(question.getNumber());
-                text = question.getText();
+                number = String.valueOf(question.getNumber());                
                 obligatory = question.getObligatory();
+                if (obligatory) {
+                    text = question.getText() + "*";
+                } else {
+                    text = question.getText();
+                }
                 layout = (RelativeLayout) inflater.inflate(R.layout.question_opentext, null);
                 EditText editTextOpen = (EditText) layout.findViewById(R.id.editTextOpen);
                 /* Logger */
@@ -226,7 +233,7 @@ public class QuestionnaireActivity extends Activity {
             
             if (questionNumber == numberQuestions) {
                 /* Last question. */
-                buttonConfirm.setText(R.string.ok);
+                buttonConfirm.setText(R.string.finish);
             }
             /* Button Confirm. */
             buttonConfirm.setOnClickListener(new OnClickListener() {
@@ -336,6 +343,7 @@ public class QuestionnaireActivity extends Activity {
                         Logger.DIALOG_CLICK_EVENT, number, getResources().getString(R.string.yes));
                 logger.logQuestionnaireEvent(event);
                 finish();
+                System.exit(0);
             }
         }).setNegativeButton(R.string.no, new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int id) {
@@ -349,17 +357,46 @@ public class QuestionnaireActivity extends Activity {
         });
         return builder.create();
     }
+    
+    private AlertDialog confirmExitDialog() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setMessage(R.string.confirm_exit).setPositiveButton(R.string.yes, new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int id) {
+                /* Logger */
+                QuestionnaireEvent event = new QuestionnaireEvent(questionnaireId, Util.getDate(), 
+                        Logger.DIALOG_CLICK_EVENT, "1", getResources().getString(R.string.yes));
+                logger.logQuestionnaireEvent(event);                
+                finish();
+                System.exit(0);
+            }
+        }).setNegativeButton(R.string.no, new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int id) {
+                /* Logger */
+                QuestionnaireEvent event = new QuestionnaireEvent(questionnaireId, Util.getDate(), 
+                        Logger.DIALOG_CLICK_EVENT, "1", getResources().getString(R.string.no));
+                logger.logQuestionnaireEvent(event);                
+                dialog.cancel();
+            }
+        });
+        return builder.create();
+    }
 
     @Override
     public void onBackPressed() {
+        
+        /* Logger */
+        TextView textViewNumber = (TextView) findViewById(R.id.textViewNumber);
+        QuestionnaireEvent event = new QuestionnaireEvent(questionnaireId, Util.getDate(), Logger.BACK_CLICK_EVENT, textViewNumber.getText().toString());            
+        logger.logQuestionnaireEvent(event);  
+        
         View buttonBackView = findViewById(R.id.buttonBack);
-        if (buttonBackView != null && buttonBackView.isShown()) {
-            /* Logger */
-            Button buttonBack = (Button) buttonBackView;
-            TextView textViewNumber = (TextView) findViewById(R.id.textViewNumber);
-            QuestionnaireEvent event = new QuestionnaireEvent(questionnaireId, Util.getDate(), Logger.BACK_CLICK_EVENT, textViewNumber.getText().toString());            
-            logger.logQuestionnaireEvent(event);
+        if (buttonBackView != null && buttonBackView.isShown()) { 
+            /* Back Question */           
+            Button buttonBack = (Button) buttonBackView;            
             buttonBack.performClick();
+        } else { /* Quit app */            
+            AlertDialog dialog = confirmExitDialog();
+            dialog.show();
         }
     }
 

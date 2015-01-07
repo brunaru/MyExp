@@ -1,6 +1,5 @@
 package br.usp.myexp.ui;
 
-import java.io.File;
 import java.util.List;
 
 import android.app.Activity;
@@ -8,7 +7,6 @@ import android.app.AlertDialog;
 import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
-import android.content.ContentResolver;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -21,7 +19,6 @@ import android.widget.ImageView;
 import br.usp.myexp.Constants;
 import br.usp.myexp.QuestionnaireManager;
 import br.usp.myexp.R;
-import br.usp.myexp.ems.xml.Questionnnaire;
 
 public class MainActivity extends Activity {
 
@@ -53,10 +50,9 @@ public class MainActivity extends Activity {
             public void onClick(DialogInterface dialog, int item) {
                 String file = items[item].toString();
                 
-                Questionnnaire ques = manager.readQuestionnaire(file);
-                String title = getResources().getString(R.string.questionnaire);
-                String text = getResources().getString(R.string.answer_questionnaire_p1) + " "
-                        + ques.getName() + " " + getResources().getString(R.string.answer_questionnaire_p2);
+                //Questionnnaire ques = manager.readQuestionnaire(file);
+                String title = getResources().getString(R.string.app_name);
+                String text = getResources().getString(R.string.answer_questionnaire);
                 NotificationCompat.Builder notification = new NotificationCompat.Builder(getApplicationContext()).setSmallIcon(R.drawable.ic_stat_notify_qst)
                         .setContentTitle(title).setContentText(text);
                 notification.setPriority(NotificationCompat.PRIORITY_MAX);

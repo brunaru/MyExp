@@ -28,9 +28,8 @@ public class AlarmReceiver extends BroadcastReceiver {
     
     private void setNotification(Context context, String fileName, String questionnaireName) {
         int notificationId = 1;
-        String title = context.getResources().getString(R.string.questionnaire);
-        String text = context.getResources().getString(R.string.answer_questionnaire_p1) + " "
-                + questionnaireName + " " + context.getResources().getString(R.string.answer_questionnaire_p2);
+        String title = context.getResources().getString(R.string.app_name);
+        String text = context.getResources().getString(R.string.answer_questionnaire);
         NotificationCompat.Builder notification = new NotificationCompat.Builder(context).setSmallIcon(R.drawable.ic_stat_notify_qst)
                 .setContentTitle(title).setContentText(text);
         notification.setPriority(NotificationCompat.PRIORITY_MAX);

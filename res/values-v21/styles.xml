@@ -8,10 +8,5 @@
     <style name="AppBaseTheme" parent="android:Theme.Material.Light">
         <!-- API 21 theme customizations can go here. -->
     </style>
-    
-    <style name="BText" parent="@android:style/TextAppearance.Medium">
-        <item name="android:textColor">@android:color/black</item>
-        <item name="android:textSize">22sp</item>
-    </style>
 
 </resources>
